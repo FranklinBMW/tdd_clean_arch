@@ -24,6 +24,11 @@ class UpdateUserParams extends Equatable {
   final String userName;
   final String avatar;
 
+  factory UpdateUserParams.empty() => const UpdateUserParams(
+        userName: 'userName',
+        avatar: 'avatar',
+      );
+
   @override
   List<Object?> get props => [userName, avatar];
 }
