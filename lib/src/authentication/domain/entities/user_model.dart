@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:equatable/equatable.dart';
 
 class UserModel extends Equatable {
@@ -8,14 +9,14 @@ class UserModel extends Equatable {
     required this.createdAt,
   });
 
-  final int id;
+  final String id;
   final String name;
   final String createdAt;
   final String avatar;
 
   const UserModel.emptyUser()
       : this(
-          id: 0,
+          id: '0',
           name: '',
           avatar: '',
           createdAt: '',
