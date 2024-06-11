@@ -1,11 +1,9 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:tdd_clean_arch/src/authentication/domain/repositories/authentication_repository.dart';
 import 'package:tdd_clean_arch/src/authentication/domain/use_cases.dart/update_user.dart';
 
-class MockAuthenticationRepository extends Mock
-    implements AuthenticationRepository {}
+import 'authetication_repository.mock.dart';
 
 void main() {
   late MockAuthenticationRepository repository;
