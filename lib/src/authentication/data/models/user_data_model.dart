@@ -51,10 +51,11 @@ class UserDataModel extends UserModel {
 
   const UserDataModel.emptyUser()
       : this(
-          id: '0',
-          name: '',
-          avatar: '',
-          createdAt: '',
+          id: '4',
+          name: 'Alice Nader',
+          avatar:
+              'https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/710.jpg',
+          createdAt: '2024-06-07T04:11:58.618Z',
         );
 
   @override
