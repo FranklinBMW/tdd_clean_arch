@@ -30,8 +30,8 @@ class UserDataModel extends UserModel {
     return <String, dynamic>{
       'id': id,
       'name': name,
-      'createdAt': createdAt,
       'avatar': avatar,
+      'createdAt': createdAt,
     };
   }
 
@@ -41,8 +41,8 @@ class UserDataModel extends UserModel {
     return UserDataModel(
       id: map['id'] as String,
       name: map['name'] as String,
-      createdAt: map['createdAt'] as String,
       avatar: map['avatar'] as String,
+      createdAt: map['createdAt'] as String,
     );
   }
 

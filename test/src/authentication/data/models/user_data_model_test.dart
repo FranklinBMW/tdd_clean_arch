@@ -1,6 +1,6 @@
 import 'dart:convert';
-import 'dart:developer';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tdd_clean_arch/core/utils/typedef.dart';
 import 'package:tdd_clean_arch/src/authentication/data/models/user_data_model.dart';
@@ -36,7 +36,7 @@ void main() {
     expect(tModel, isA<UserModel>());
   });
   group(
-    'user data model from map',
+    'UserDataModel fromMap',
     () {
       test(
         'should return a [UserDataModel] with the right data',
@@ -66,6 +66,73 @@ void main() {
 
         //Assert
         expect(usersList, contains(tModel));
+      });
+    },
+  );
+
+  group(
+    'UserDataModel fromJson',
+    () {
+      test(
+        'should return a [UserDataModel] with the right data',
+        () async {
+          //Arrange
+
+          //Act
+          final result = UserDataModel.fromJson(userJson);
+
+          //Assert
+          expect(result, tModel);
+        },
+      );
+    },
+  );
+
+  group(
+    'UserDataModel toMap',
+    () {
+      test(
+        'should return [Map] with the right data using toMap',
+        () async {
+          //Arrange
+
+          //Act
+          final result = tModel.toMap();
+          debugPrint(result.toString());
+
+          //Assert
+          expect(result, userMap);
+        },
+      );
+
+      test(
+        'should return [List<Map>] with the right data',
+        () async {
+          //Arrange
+
+          //Act
+          final result = usersList.map((e) => e.toMap()).toList();
+
+          //Assert
+          expect(result, userListMap);
+        },
+      );
+    },
+  );
+
+  group(
+    'UserDataModel toJson',
+    () {
+      test('should return [String] containing right data', () async {
+        //Arrange
+
+        //Act
+        final result = tModel.toJson();
+        debugPrint(result);
+        debugPrint(userJson);
+
+        //Assert
+        expect(result, userJson);
       });
     },
   );
