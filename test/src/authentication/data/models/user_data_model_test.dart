@@ -47,7 +47,7 @@ void main() {
           final result = UserDataModel.fromMap(userMap);
 
           //Assert
-          expect(result, tModel);
+          expect(result, equals(tModel));
         },
       );
 
@@ -82,7 +82,7 @@ void main() {
           final result = UserDataModel.fromJson(userJson);
 
           //Assert
-          expect(result, tModel);
+          expect(result, equals(tModel));
         },
       );
     },
@@ -101,7 +101,7 @@ void main() {
           debugPrint(result.toString());
 
           //Assert
-          expect(result, userMap);
+          expect(result, equals(userMap));
         },
       );
 
@@ -114,7 +114,7 @@ void main() {
           final result = usersList.map((e) => e.toMap()).toList();
 
           //Assert
-          expect(result, userListMap);
+          expect(result, equals(userListMap));
         },
       );
     },
@@ -128,12 +128,28 @@ void main() {
 
         //Act
         final result = tModel.toJson();
-        debugPrint(result);
-        debugPrint(userJson);
 
         //Assert
         expect(result, userJson);
       });
+    },
+  );
+
+  group(
+    'UserDataModel copyWith',
+    () {
+      test(
+        'should return [UserDataModel] with different name using copyWith',
+        () async {
+          //Arrange
+
+          //Act
+          final result = tModel.copyWith(name: 'Sonera');
+
+          //Assert
+          expect(result.name, equals('Sonera'));
+        },
+      );
     },
   );
 }
