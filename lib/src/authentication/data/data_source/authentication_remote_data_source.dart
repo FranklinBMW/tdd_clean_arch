@@ -1,4 +1,4 @@
-import 'package:tdd_clean_arch/src/authentication/data/models/user_data_model.dart';
+import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
 
 abstract class AuthenticationRemoteDataSource {
   Future<void> createUser({
@@ -12,5 +12,5 @@ abstract class AuthenticationRemoteDataSource {
     required String avatar,
   });
 
-  Future<List<UserDataModel>> getUsers();
+  Future<List<UserModel>> getUsers();
 }

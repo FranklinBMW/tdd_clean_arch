@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:tdd_clean_arch/core/errors/exceptions.dart';
 import 'package:tdd_clean_arch/core/errors/failure.dart';
+import 'package:tdd_clean_arch/core/utils/typedef.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source/authentication_remote_data_source.dart';
 import 'package:tdd_clean_arch/src/authentication/data/repository_impl/authentication_repository_impl.dart';
+import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
+
+import '../../../../fixtures/fixture_reader.dart';
 
 class MockAuthenticationRemoteDataSource extends Mock
     implements AuthenticationRemoteDataSource {}
@@ -21,9 +27,25 @@ void main() {
   const tException =
       ApiException(message: 'Unknown Error Occurred', statusCode: 500);
 
+  const tUserException =
+      ApiException(message: 'No User Founded', statusCode: 404);
+
   const String name = 'user.Name';
   const String avatar = 'user.Avatar';
   const String createdAt = 'user.CreatedAt';
+
+  final userListJson = fixture('users.json');
+  final userListMap = json.decode(userListJson) as List<dynamic>;
+
+  final List<UserModel> usersList = [];
+
+  setUpAll(() {
+    for (final dynamic item in userListMap) {
+      if (item is DataMap) {
+        usersList.add(UserModel.fromMap(item));
+      }
+    }
+  });
 
   group(
     'AuthenticationRemoteDataSource.createUser',
@@ -162,6 +184,66 @@ void main() {
           verify(
             () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
           );
+          verifyNoMoreInteractions(mockRemoteDataSource);
+        },
+      );
+    },
+  );
+
+  group(
+    'AuthenticationRemoteDataSource.getUsers',
+    () {
+      test(
+        'should return a list of [UserModel] when calling [AuthenticationRemoteDataSource.getUsers]',
+        () async {
+          // Arrange
+          when(
+            () => mockRemoteDataSource.getUsers(),
+          ).thenAnswer(
+            (_) => Future.value(usersList),
+          );
+
+          // Act
+          final result = await repositoryImpl.getUsers();
+
+          // Assert
+          expect(
+            result,
+            equals(
+              Right(
+                usersList,
+              ),
+            ),
+          );
+          verify(() => mockRemoteDataSource.getUsers()).called(1);
+          verifyNoMoreInteractions(mockRemoteDataSource);
+        },
+      );
+
+      test(
+        'should return [ApiFailure] when called [AuthenticationRemoteDataSource.getUsers] and fails the request',
+        () async {
+          // Arrange
+          when(
+            () => mockRemoteDataSource.getUsers(),
+          ).thenThrow(tUserException);
+
+          // Act
+          final result = await repositoryImpl.getUsers();
+
+          // Assert
+          expect(
+            result,
+            equals(
+              Left(
+                ApiFailure(
+                  message: tUserException.message,
+                  statusCode: tUserException.statusCode,
+                ),
+              ),
+            ),
+          );
+          verify(() => mockRemoteDataSource.getUsers()).called(1);
           verifyNoMoreInteractions(mockRemoteDataSource);
         },
       );

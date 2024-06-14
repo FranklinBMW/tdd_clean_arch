@@ -3,6 +3,7 @@ import 'package:tdd_clean_arch/core/errors/exceptions.dart';
 import 'package:tdd_clean_arch/core/errors/failure.dart';
 import 'package:tdd_clean_arch/core/utils/typedef.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source/authentication_remote_data_source.dart';
+import 'package:tdd_clean_arch/src/authentication/data/models/user_data_model.dart';
 import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
 import 'package:tdd_clean_arch/src/authentication/domain/repositories/authentication_repository.dart';
 
@@ -35,8 +36,12 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   ResultFuture<List<UserModel>> getUsers() async {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+    try {
+      final usersResponse = await _dataSource.getUsers();
+      return Right(usersResponse);
+    } on ApiException catch (e) {
+      return Left(ApiFailure.fromException(e));
+    }
   }
 
   @override
