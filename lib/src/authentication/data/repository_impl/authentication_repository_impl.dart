@@ -1,4 +1,6 @@
 import 'package:dartz/dartz.dart';
+import 'package:tdd_clean_arch/core/errors/exceptions.dart';
+import 'package:tdd_clean_arch/core/errors/failure.dart';
 import 'package:tdd_clean_arch/core/utils/typedef.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source/authentication_remote_data_source.dart';
 import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
@@ -20,9 +22,15 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
       - Make sure that the method returns proper data if there is no error
       - Make sure that the method returns proper error if there is an error
      */
-    await _dataSource.createUser(
-        name: name, avatar: avatar, createdAt: createdAt);
-    return const Right(null);
+    try {
+      await _dataSource.createUser(
+          name: name, avatar: avatar, createdAt: createdAt);
+      return const Right(null);
+    } on ApiException catch (e) {
+      return Left(
+        ApiFailure.fromException(e),
+      );
+    }
   }
 
   @override
