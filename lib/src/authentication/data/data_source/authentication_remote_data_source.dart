@@ -7,7 +7,7 @@ abstract class AuthenticationRemoteDataSource {
     required String createdAt,
   });
 
-  Future<void> updateuser({
+  Future<void> updateUser({
     required String name,
     required String avatar,
   });

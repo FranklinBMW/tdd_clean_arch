@@ -34,14 +34,19 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
   }
 
   @override
-  ResultFuture<List<UserModel>> getUsers() {
-    // TODO: implement getUsers
+  ResultFuture<List<UserModel>> getUsers() async {
+    // TODO: implement updateUser
     throw UnimplementedError();
   }
 
   @override
-  ResultFutureVoid updateUser({required String name, required String avatar}) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+  ResultFutureVoid updateUser(
+      {required String name, required String avatar}) async {
+    try {
+      await _dataSource.updateUser(name: name, avatar: avatar);
+      return const Right(null);
+    } on ApiException catch (e) {
+      return Left(ApiFailure.fromException(e));
+    }
   }
 }

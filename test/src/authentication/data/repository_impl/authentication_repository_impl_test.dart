@@ -101,4 +101,70 @@ void main() {
       );
     },
   );
+
+  group(
+    'AuthenticationRemoteDataSource.updateUser',
+    () {
+      test(
+        'should call [AuthenticationRemoteDataSource.updateUser] and return success if remote data source is success',
+        () async {
+          // Arrange
+          when(
+            () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
+          ).thenAnswer(
+            (invocation) => Future.value(),
+          );
+          // Act
+          final result = await repositoryImpl.updateUser(
+            name: name,
+            avatar: avatar,
+          );
+          // Assert
+          expect(result, equals(const Right(null)));
+          verify(
+            () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
+          ).called(1);
+          verifyNoMoreInteractions(mockRemoteDataSource);
+        },
+      );
+
+      test(
+        'should call [AuthenticationRemoteDataSource.updateUser] and return an [ApiFailure] when return is unsuccessfully',
+        () async {
+          // Arrange
+          when(
+            () => mockRemoteDataSource.updateUser(
+              name: any(named: 'name'),
+              avatar: any(named: 'avatar'),
+            ),
+          ).thenThrow(
+            tException,
+          );
+
+          // Act
+          final result = await repositoryImpl.updateUser(
+            name: name,
+            avatar: avatar,
+          );
+
+          // Assert
+          expect(
+            result,
+            equals(
+              Left(
+                ApiFailure(
+                  message: tException.message,
+                  statusCode: tException.statusCode,
+                ),
+              ),
+            ),
+          );
+          verify(
+            () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
+          );
+          verifyNoMoreInteractions(mockRemoteDataSource);
+        },
+      );
+    },
+  );
 }
