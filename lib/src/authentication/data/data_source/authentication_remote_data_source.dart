@@ -4,7 +4,12 @@ abstract class AuthenticationRemoteDataSource {
   Future<void> createUser({
     required String name,
     required String avatar,
-    required String createAt,
+    required String createdAt,
+  });
+
+  Future<void> updateuser({
+    required String name,
+    required String avatar,
   });
 
   Future<List<UserDataModel>> getUsers();
