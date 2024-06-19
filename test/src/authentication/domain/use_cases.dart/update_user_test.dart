@@ -25,6 +25,7 @@ void main() {
           // arrange
           when(
             () => repository.updateUser(
+              id: any(named: 'id'),
               name: any(named: 'name'),
               avatar: any(named: 'avatar'),
             ),
@@ -43,7 +44,10 @@ void main() {
 
           verify(
             () => repository.updateUser(
-                name: params.userName, avatar: params.avatar),
+              id: params.id,
+              name: params.userName,
+              avatar: params.avatar,
+            ),
           ).called(1);
 
           verifyNoMoreInteractions(repository);

@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:tdd_clean_arch/core/errors/exceptions.dart';
-import 'package:tdd_clean_arch/core/errors/failure.dart';
 import 'package:tdd_clean_arch/core/utils/constants.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source/authentication_remote_data_source.dart';
 import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
@@ -9,6 +8,7 @@ import 'package:http/http.dart' as http;
 
 const kGetUsersRequestEndpoint = '/users';
 const kPostUsersRequestEndpoint = '/users';
+const kPutUsersRequestEndpoint = '/users';
 
 class AuthenticationRemoteDataSourceImpl
     implements AuthenticationRemoteDataSource {
@@ -57,14 +57,41 @@ class AuthenticationRemoteDataSourceImpl
   }
 
   @override
-  Future<List<UserModel>> getUsers() {
-    // TODO: implement getUsers
-    throw UnimplementedError();
+  Future<void> updateUser({
+    required String id,
+    required String name,
+    required String avatar,
+  }) async {
+    try {
+      final response = await _client.put(
+        Uri.parse('$kBaseUrl$kPutUsersRequestEndpoint/$id'),
+        body: jsonEncode(
+          {
+            'name': name,
+            'avatar': avatar,
+          },
+        ),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw ApiException(
+          message: response.body,
+          statusCode: response.statusCode,
+        );
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(
+        message: e.toString(),
+        statusCode: 505,
+      );
+    }
   }
 
   @override
-  Future<void> updateUser({required String name, required String avatar}) {
-    // TODO: implement updateUser
+  Future<List<UserModel>> getUsers() {
+    // TODO: implement getUsers
     throw UnimplementedError();
   }
 }

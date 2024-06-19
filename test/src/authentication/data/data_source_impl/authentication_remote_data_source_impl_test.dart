@@ -46,7 +46,7 @@ void main() {
           final methodCall = remoteDataSource.createUser;
 
           // Assert
-          await expectLater(
+          expect(
             methodCall(
               name: 'John Doe',
               avatar: 'https://example.com/avatar.jpg',
@@ -118,23 +118,103 @@ void main() {
   );
 
   group(
+    'AuthenticationRemoteDataSourceImpl.updateUser',
+    () {
+      test(
+        'should return success when [updateUser] is called and response is 200',
+        () async {
+          // Arrange
+          when(() => client.put(
+                any(),
+                body: any(named: 'body'),
+              )).thenAnswer(
+            (_) async => http.Response(
+              "User Updated Successfully",
+              200,
+            ),
+          );
+
+          // Act
+          final methodCall = remoteDataSource.updateUser;
+
+          // Assert
+          expect(
+            methodCall(
+              id: '1',
+              name: 'name',
+              avatar: 'avatar',
+            ),
+            completes,
+          );
+
+          verify(
+            () => client.put(
+              Uri.parse('$kBaseUrl$kPutUsersRequestEndpoint/1'),
+              body: jsonEncode(
+                {
+                  "name": "name",
+                  "avatar": "avatar",
+                },
+              ),
+            ),
+          ).called(1);
+          verifyNoMoreInteractions(client);
+        },
+      );
+
+      test(
+        'should throw a [ApiException] when [updateUser] is called and response is not 200',
+        () async {
+          // Arrange
+          when(() => client.put(
+                any(),
+                body: any(named: 'body'),
+              )).thenAnswer(
+            (_) async => http.Response('Cannot Update User', 400),
+          );
+
+          // Act
+          final methodCall = remoteDataSource.updateUser(
+            id: '1',
+            name: 'name',
+            avatar: 'avatar',
+          );
+          // Assert
+          expect(
+            () async => methodCall,
+            throwsA(
+              const ApiException(
+                message: "Cannot Update User",
+                statusCode: 400,
+              ),
+            ),
+          );
+
+          verify(
+            () => client.put(
+              Uri.parse('$kBaseUrl$kPutUsersRequestEndpoint/1'),
+              body: jsonEncode(
+                {
+                  "name": "name",
+                  "avatar": "avatar",
+                },
+              ),
+            ),
+          ).called(1);
+
+          verifyNoMoreInteractions(client);
+        },
+      );
+    },
+  );
+
+  group(
     'AuthenticationRemoteDataSourceImpl.getUsers',
     () {
       test(
         'should complete successfully and return 200 as statusCode when called [getUsers] and request is successful',
         () async {
           // Arrange
-          when(() => client.get(
-                any(),
-                headers: any(named: 'headers'),
-              )).thenAnswer(
-            (_) async => http.Response(
-                '[{"name": "John Doe", "avatar": "https://example.com/avatar.jpg", "createdAt": "2023-03-08T12:00:00.000Z"}]',
-                200),
-          );
-
-          // Act
-
           // Act
           // Assert
         },

@@ -11,6 +11,7 @@ abstract class AuthenticationRepository {
   });
 
   ResultFutureVoid updateUser({
+    required String id,
     required String name,
     required String avatar,
   });

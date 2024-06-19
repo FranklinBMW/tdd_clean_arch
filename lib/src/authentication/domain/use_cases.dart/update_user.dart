@@ -10,6 +10,7 @@ class UpdateUser extends UseCaseWithParams<void, UpdateUserParams> {
   @override
   ResultFutureVoid call(UpdateUserParams params) async =>
       _repository.updateUser(
+        id: params.id,
         name: params.userName,
         avatar: params.avatar,
       );
@@ -17,18 +18,21 @@ class UpdateUser extends UseCaseWithParams<void, UpdateUserParams> {
 
 class UpdateUserParams extends Equatable {
   const UpdateUserParams({
+    required this.id,
     required this.userName,
     required this.avatar,
   });
 
+  final String id;
   final String userName;
   final String avatar;
 
   factory UpdateUserParams.empty() => const UpdateUserParams(
+        id: 'id',
         userName: 'userName',
         avatar: 'avatar',
       );
 
   @override
-  List<Object?> get props => [userName, avatar];
+  List<Object?> get props => [id, userName, avatar];
 }

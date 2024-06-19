@@ -45,9 +45,11 @@ class AuthenticationRepositoryImpl implements AuthenticationRepository {
 
   @override
   ResultFutureVoid updateUser(
-      {required String name, required String avatar}) async {
+      {required String id,
+      required String name,
+      required String avatar}) async {
     try {
-      await _dataSource.updateUser(name: name, avatar: avatar);
+      await _dataSource.updateUser(id: id, name: name, avatar: avatar);
       return const Right(null);
     } on ApiException catch (e) {
       return Left(ApiFailure.fromException(e));

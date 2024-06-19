@@ -132,19 +132,28 @@ void main() {
         () async {
           // Arrange
           when(
-            () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
+            () => mockRemoteDataSource.updateUser(
+              id: '1',
+              name: name,
+              avatar: avatar,
+            ),
           ).thenAnswer(
             (invocation) => Future.value(),
           );
           // Act
           final result = await repositoryImpl.updateUser(
+            id: '1',
             name: name,
             avatar: avatar,
           );
           // Assert
           expect(result, equals(const Right(null)));
           verify(
-            () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
+            () => mockRemoteDataSource.updateUser(
+              id: '1',
+              name: name,
+              avatar: avatar,
+            ),
           ).called(1);
           verifyNoMoreInteractions(mockRemoteDataSource);
         },
@@ -156,6 +165,7 @@ void main() {
           // Arrange
           when(
             () => mockRemoteDataSource.updateUser(
+              id: any(named: 'id'),
               name: any(named: 'name'),
               avatar: any(named: 'avatar'),
             ),
@@ -165,6 +175,7 @@ void main() {
 
           // Act
           final result = await repositoryImpl.updateUser(
+            id: '1',
             name: name,
             avatar: avatar,
           );
@@ -182,7 +193,11 @@ void main() {
             ),
           );
           verify(
-            () => mockRemoteDataSource.updateUser(name: name, avatar: avatar),
+            () => mockRemoteDataSource.updateUser(
+              id: '1',
+              name: name,
+              avatar: avatar,
+            ),
           );
           verifyNoMoreInteractions(mockRemoteDataSource);
         },
