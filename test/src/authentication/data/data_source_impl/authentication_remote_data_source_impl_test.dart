@@ -5,8 +5,12 @@ import 'package:http/http.dart' as http;
 import 'package:mocktail/mocktail.dart';
 import 'package:tdd_clean_arch/core/errors/exceptions.dart';
 import 'package:tdd_clean_arch/core/utils/constants.dart';
+import 'package:tdd_clean_arch/core/utils/typedef.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source/authentication_remote_data_source.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source_impl/authentication_remote_data_source_impl.dart';
+import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
+
+import '../../../../fixtures/fixture_reader.dart';
 
 class MockClient extends Mock implements http.Client {}
 
@@ -18,6 +22,19 @@ void main() {
     "avatar": "https://example.com/avatar.jpg",
     "createdAt": "2023-03-08T12:00:00.000Z",
   };
+
+  final userListJson = fixture('users.json');
+  final userListMap = json.decode(userListJson) as List<dynamic>;
+
+  final List<UserModel> usersList = [];
+
+  setUpAll(() {
+    for (final dynamic item in userListMap) {
+      if (item is DataMap) {
+        usersList.add(UserModel.fromMap(item));
+      }
+    }
+  });
 
   setUp(() {
     client = MockClient();
@@ -215,8 +232,73 @@ void main() {
         'should complete successfully and return 200 as statusCode when called [getUsers] and request is successful',
         () async {
           // Arrange
+          when(
+            () => client.get(any()),
+          ).thenAnswer(
+            (_) async => http.Response(userListJson, 200),
+          );
+          // Act
+          final resultCall = await remoteDataSource.getUsers();
+          // Assert
+          expect(resultCall, usersList);
+          verify(
+            () => client.get(
+              Uri.parse('$kBaseUrl$kGetUsersRequestEndpoint'),
+            ),
+          ).called(1);
+          verifyNoMoreInteractions(client);
+        },
+      );
+
+      test(
+        'should returns an empty list when response body is empty after call [getUsers]',
+        () async {
+          // Arrange
+          when(
+            () => client.get(any()),
+          ).thenAnswer(
+            (_) async => http.Response('', 200),
+          );
+          // Act
+          final resultCall = await remoteDataSource.getUsers();
+
+          // Assert
+          expect(resultCall, []);
+          verify(
+            () => client.get(
+              Uri.parse('$kBaseUrl$kGetUsersRequestEndpoint'),
+            ),
+          ).called(1);
+          verifyNoMoreInteractions(client);
+        },
+      );
+
+      test(
+        'should throws an [ApiException] when called [getUsers] and request is unsuccessful',
+        () async {
+          // Arrange
+          when(
+            () => client.get(any()),
+          ).thenAnswer(
+              (_) async => http.Response('No users found in this uri', 400));
           // Act
           // Assert
+          expect(
+            () async => await remoteDataSource.getUsers(),
+            throwsA(
+              const ApiException(
+                message: 'No users found in this uri',
+                statusCode: 400,
+              ),
+            ),
+          );
+          verify(
+            () => client.get(
+              Uri.parse('$kBaseUrl$kGetUsersRequestEndpoint'),
+            ),
+          ).called(1);
+
+          verifyNoMoreInteractions(client);
         },
       );
     },

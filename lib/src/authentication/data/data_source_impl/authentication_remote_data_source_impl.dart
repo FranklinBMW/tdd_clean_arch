@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:tdd_clean_arch/core/errors/exceptions.dart';
 import 'package:tdd_clean_arch/core/utils/constants.dart';
+import 'package:tdd_clean_arch/core/utils/typedef.dart';
 import 'package:tdd_clean_arch/src/authentication/data/data_source/authentication_remote_data_source.dart';
 import 'package:tdd_clean_arch/src/authentication/domain/entities/user_model.dart';
 import 'package:http/http.dart' as http;
@@ -90,8 +91,36 @@ class AuthenticationRemoteDataSourceImpl
   }
 
   @override
-  Future<List<UserModel>> getUsers() {
-    // TODO: implement getUsers
-    throw UnimplementedError();
+  Future<List<UserModel>> getUsers() async {
+    try {
+      final response = await _client.get(
+        Uri.parse('$kBaseUrl$kGetUsersRequestEndpoint'),
+      );
+
+      if (response.statusCode != 200 && response.statusCode != 201) {
+        throw ApiException(
+          message: response.body,
+          statusCode: response.statusCode,
+        );
+      }
+
+      if (response.statusCode == 200 && response.body.isNotEmpty) {
+        final List<dynamic> usersResponse = json.decode(response.body);
+        final users = usersResponse
+            .map((item) => UserModel.fromMap(item as DataMap))
+            .toList();
+
+        return users;
+      } else {
+        return [];
+      }
+    } on ApiException {
+      rethrow;
+    } catch (e) {
+      throw ApiException(
+        message: e.toString(),
+        statusCode: 505,
+      );
+    }
   }
 }
