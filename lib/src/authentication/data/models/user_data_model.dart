@@ -26,6 +26,7 @@ class UserDataModel extends UserModel {
     );
   }
 
+  @override
   DataMap toMap() {
     return <String, dynamic>{
       'id': id,
@@ -35,6 +36,7 @@ class UserDataModel extends UserModel {
     };
   }
 
+  @override
   String toJson() => json.encode(toMap());
 
   factory UserDataModel.fromMap(DataMap map) {
