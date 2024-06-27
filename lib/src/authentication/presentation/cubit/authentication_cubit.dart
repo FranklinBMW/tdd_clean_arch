@@ -65,7 +65,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   /// Asynchronously handles the update of a user event.
   /// @return {Future<void>} - A Future that completes when the user update process is complete.
-  Future<void> updateUserEvent({
+  Future<void> updateUser({
     required String id,
     required String name,
     required String avatar,
@@ -109,7 +109,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
   /// If there is an error during the user retrieval process, it emits an [AuthenticationError] state with the error message.
   /// If an exception occurs during the user retrieval process, it emits an [AuthenticationError] state with the exception message.
   /// Returns a [Future<void>] that completes when the user retrieval process is complete.
-  Future<void> getUsersEvent() async {
+  Future<void> getUsers() async {
     emit(const AuthenticationGettingUsers());
     try {
       final result = await _getUsers();
