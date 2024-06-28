@@ -13,8 +13,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _createdAtController = TextEditingController();
-  final TextEditingController _avatarController = TextEditingController();
   void getUsers() {
     context.read<AuthenticationCubit>().getUsers();
   }
@@ -88,8 +86,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 builder: (_) => AddUserDialog(
                   nameController: _nameController,
-                  avatarController: _avatarController,
-                  createdAtController: _createdAtController,
                 ),
               );
             },

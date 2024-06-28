@@ -2,16 +2,77 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tdd_clean_arch/src/authentication/presentation/cubit/authentication_cubit.dart';
 
-class AddUserDialog extends StatelessWidget {
+class AddUserDialog extends StatefulWidget {
   const AddUserDialog({
     required this.nameController,
-    required this.avatarController,
-    required this.createdAtController,
     super.key,
   });
   final TextEditingController nameController;
-  final TextEditingController avatarController;
-  final TextEditingController createdAtController;
+  @override
+  State<AddUserDialog> createState() => _AddUserDialogState();
+}
+
+class _AddUserDialogState extends State<AddUserDialog> {
+  final TextEditingController createdAtController = TextEditingController();
+
+  DateTime? selectedDate;
+
+  final FocusNode _focusNode = FocusNode();
+  double? _width;
+  double _height = 60.0;
+
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        createdAtController.text = selectedDate.toString();
+      });
+    }
+  }
+
+  void _handleFocusChange() {
+    if (_focusNode.hasFocus) {
+      _animateSize();
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _focusNode.addListener(_handleFocusChange);
+  }
+
+  void _animateSize() {
+    setState(() {
+      _width = 300;
+      _height = 80.0;
+    });
+
+    Future.delayed(const Duration(milliseconds: 1500), () {
+      setState(() {
+        _width = View.of(context).devicePixelRatio *
+            View.of(context).physicalSize.width /
+            3;
+        _height = 60.0;
+      });
+
+      Future.delayed(const Duration(milliseconds: 1500), () {
+        setState(() {});
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +82,7 @@ class AddUserDialog extends StatelessWidget {
       child: Center(
         child: Container(
           margin: const EdgeInsets.all(16.0),
-          width: 400.0,
+          width: View.of(context).physicalSize.width / 3,
           padding: const EdgeInsets.all(16.0),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
@@ -30,27 +91,34 @@ class AddUserDialog extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: nameController,
-                keyboardType: TextInputType.name,
-                textInputAction: TextInputAction.next,
-                maxLines: 1,
-                decoration: InputDecoration(
-                  labelText: 'Name',
-                  border: const OutlineInputBorder(
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 1500),
+                curve: Curves.easeInOut,
+                height: _height,
+                width: _width ?? View.of(context).physicalSize.width,
+                child: TextFormField(
+                  focusNode: _focusNode,
+                  controller: widget.nameController,
+                  keyboardType: TextInputType.name,
+                  textInputAction: TextInputAction.next,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    labelText: 'Name',
+                    border: const OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8.0)),
                       borderSide: BorderSide(
                         color: Colors.purpleAccent,
-                      )),
-                  suffixIcon: Icon(
-                    Icons.person,
-                    color: iconColor,
+                      ),
+                    ),
+                    suffixIcon: Icon(
+                      Icons.person,
+                      color: iconColor,
+                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 16.0),
+              const SizedBox(height: 12.0),
               TextField(
-                controller: avatarController,
                 keyboardType: TextInputType.url,
                 textInputAction: TextInputAction.next,
                 maxLines: 1,
@@ -81,6 +149,8 @@ class AddUserDialog extends StatelessWidget {
                     color: iconColor,
                   ),
                 ),
+                onTap: _selectDate,
+                readOnly: true,
               ),
               const SizedBox(height: 16.0),
               ElevatedButton(
@@ -94,10 +164,10 @@ class AddUserDialog extends StatelessWidget {
                   minimumSize: const Size(double.infinity, 60.0),
                 ),
                 onPressed: () {
-                  final name = nameController.text.trim();
+                  final name = widget.nameController.text.trim();
                   const avatar =
                       "https://cloudflare-ipfs.com/ipfs/Qmd3W5DuhgHirLHGVixi6V76LhCkZUz6pnFt5AJBiyvHye/avatar/500.jpg";
-                  final createdAt = DateTime.now().toLocal().toString();
+                  final createdAt = createdAtController.text.trim();
                   if (name.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
