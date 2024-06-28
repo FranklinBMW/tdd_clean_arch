@@ -52,6 +52,7 @@ void main() {
           when(() => client.post(
                 any(),
                 body: any(named: 'body'),
+                headers: any(named: 'headers'),
               )).thenAnswer(
             (_) async => http.Response(
               jsonEncode(johnDoe),
@@ -76,6 +77,7 @@ void main() {
             () => client.post(
               Uri.parse('$kBaseUrl$kPostUsersRequestEndpoint'),
               body: jsonEncode(johnDoe),
+              headers: {'Content-Type': 'application/json'},
             ),
           ).called(1);
 
@@ -90,6 +92,7 @@ void main() {
           when(() => client.post(
                 any(),
                 body: any(named: 'body'),
+                headers: any(named: 'headers'),
               )).thenAnswer(
             (_) async => http.Response(
               "Something went wrong",
@@ -125,6 +128,7 @@ void main() {
                   "createdAt": "createdAt",
                 },
               ),
+              headers: {'Content-Type': 'application/json'},
             ),
           ).called(1);
 
@@ -144,6 +148,7 @@ void main() {
           when(() => client.put(
                 any(),
                 body: any(named: 'body'),
+                headers: any(named: 'headers'),
               )).thenAnswer(
             (_) async => http.Response(
               "User Updated Successfully",
@@ -173,6 +178,7 @@ void main() {
                   "avatar": "avatar",
                 },
               ),
+              headers: {'Content-Type': 'application/json'},
             ),
           ).called(1);
           verifyNoMoreInteractions(client);
@@ -186,6 +192,7 @@ void main() {
           when(() => client.put(
                 any(),
                 body: any(named: 'body'),
+                headers: any(named: 'headers'),
               )).thenAnswer(
             (_) async => http.Response('Cannot Update User', 400),
           );
@@ -216,6 +223,7 @@ void main() {
                   "avatar": "avatar",
                 },
               ),
+              headers: {'Content-Type': 'application/json'},
             ),
           ).called(1);
 

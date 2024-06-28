@@ -39,6 +39,7 @@ class AuthenticationRemoteDataSourceImpl
             'createdAt': createdAt,
           },
         ),
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode != 200 && response.statusCode != 201) {
@@ -72,6 +73,7 @@ class AuthenticationRemoteDataSourceImpl
             'avatar': avatar,
           },
         ),
+        headers: {'Content-Type': 'application/json'},
       );
 
       if (response.statusCode != 200 && response.statusCode != 201) {
